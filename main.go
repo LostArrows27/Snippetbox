@@ -11,16 +11,10 @@ import (
 
 func logRequestIP(path string, r *http.Request) {
 	ip := ipaddress.GetIP(r)
-
 	log.Printf("Request to %s : from %s", path, ip)
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-
 	logRequestIP("/", r)
 	w.Write([]byte("Hello from SnippetBox"))
 }
@@ -54,7 +48,7 @@ func main() {
 		MUX: http.NewServeMux(),
 	}
 
-	restMux.Get("/", home)
+	restMux.Get("/", home, "fixed")
 	restMux.Get("/snippet/view", viewSnippetHandler)
 	restMux.Post("/snippet/create", createSnippetHanlder)
 
