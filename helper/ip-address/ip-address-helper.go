@@ -1,6 +1,7 @@
 package ipaddress
 
 import (
+	"log"
 	"net"
 	"net/http"
 )
@@ -43,4 +44,9 @@ func GetIP(r *http.Request) string {
 		ip = r.RemoteAddr
 	}
 	return ip
+}
+
+func LogRequestIP(path string, r *http.Request) {
+	ip := GetIP(r)
+	log.Printf("Request to %s : from %s", path, ip)
 }

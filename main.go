@@ -9,23 +9,18 @@ import (
 	"github.com/LostArrows27/snippetbox/rest"
 )
 
-func logRequestIP(path string, r *http.Request) {
-	ip := ipaddress.GetIP(r)
-	log.Printf("Request to %s : from %s", path, ip)
-}
-
 func home(w http.ResponseWriter, r *http.Request) {
-	logRequestIP("/", r)
+	ipaddress.LogRequestIP("/", r)
 	w.Write([]byte("Hello from SnippetBox"))
 }
 
 func createSnippetHanlder(w http.ResponseWriter, r *http.Request) {
-	logRequestIP("/snippet/create", r)
+	ipaddress.LogRequestIP("/snippet/create", r)
 	w.Write([]byte("Create snippet"))
 }
 
 func viewSnippetHandler(w http.ResponseWriter, r *http.Request) {
-	logRequestIP("/snippet/view", r)
+	ipaddress.LogRequestIP("/snippet/view", r)
 
 	w.Write([]byte("View snippet"))
 }
@@ -47,7 +42,6 @@ func main() {
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
-
 	restMux.Get("/", home, "fixed")
 	restMux.Get("/snippet/view", viewSnippetHandler)
 	restMux.Post("/snippet/create", createSnippetHanlder)
