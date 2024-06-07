@@ -9,13 +9,12 @@ import "net/http"
 func HandlerMethod(method string, handler HandlerFunc, path string, config ...string) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != method {
-			w.WriteHeader(403)
-			w.Write([]byte("Method Not Allowed"))
+			w.Header().Set("Allow", method)
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
 
 		isFixed := false
-
 		for _, item := range config {
 			if item == "fixed" {
 				isFixed = true

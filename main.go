@@ -26,11 +26,11 @@ func viewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// 1. load ENV
+	// 0. load ENV
 	env.LoadEnv(".env")
 	port := env.GetEnv("PORT")
 
-	// 1.5. Server IPv4 address
+	// 1. Server IPv4 address
 	ips, err := ipaddress.GetServerIP()
 	if err != nil {
 		log.Println("Error:", err)

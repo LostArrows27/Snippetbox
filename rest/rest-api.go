@@ -18,5 +18,4 @@ func (rest *RestAPI) Post(path string, handler HandlerFunc, config ...string) {
 	postHandler := HandlerMethod("POST", handler, path, config...)
 
 	rest.MUX.HandleFunc(path, postHandler)
-
 }
