@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	cnst "github.com/LostArrows27/snippetbox/pkg/const"
 	htmlParse "github.com/LostArrows27/snippetbox/pkg/html-parse"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 )
@@ -12,8 +13,7 @@ import (
 func home(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/", r)
 
-	htmlParse.ExecuteHTML(w, "./ui/html/page/home.html")
-
+	htmlParse.ExecuteHTML(w, cnst.HomeBase, cnst.HomeHTMLLists)
 }
 
 func createSnippetHanlder(w http.ResponseWriter, r *http.Request) {

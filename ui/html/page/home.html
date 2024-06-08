@@ -1,22 +1,5 @@
-<!doctype html>
-<html lang='en'>
-
-<head>
-    <meta charset='utf-8'>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <title>Home - Snippetbox</title>
-
-</head>
-
-<body>
-    <header>
-        <h1 class="text-green-400"><a href='/'>Snippetbox</a></h1>
-    </header>
-    <main>
-        <h2>Latest Snippets</h2>
-        <p>There's nothing to see here yet!</p>
-    </main>
-    <footer>Powered by <a href='https://golang.org/'>Go</a></footer>
-</body>
-
-</html>
+{{define "title"}}Home{{end}}
+{{define "main"}}
+<h2 class="text-2xl text-green-600">Latest Snippets</h2>
+<p>There's nothing to see here yet!</p>
+{{end}}

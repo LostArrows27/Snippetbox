@@ -6,8 +6,8 @@ import (
 	"text/template"
 )
 
-func parseHTML(w http.ResponseWriter, path string) *template.Template {
-	ts, err := template.ParseFiles(path)
+func parseHTML(w http.ResponseWriter, path []string) *template.Template {
+	ts, err := template.ParseFiles(path...)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -19,10 +19,10 @@ func parseHTML(w http.ResponseWriter, path string) *template.Template {
 
 }
 
-func ExecuteHTML(w http.ResponseWriter, path string) {
+func ExecuteHTML(w http.ResponseWriter, base string, path []string) {
 	ts := parseHTML(w, path)
 
-	err := ts.Execute(w, nil)
+	err := ts.ExecuteTemplate(w, base, nil)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", 500)
