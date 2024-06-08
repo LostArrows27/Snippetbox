@@ -26,6 +26,7 @@ func main() {
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
+	restMux.Get("/static/", staticFileHanlder)
 	restMux.Get("/", home, "fixed")
 	restMux.Get("/snippet/view", viewSnippetHandler)
 	restMux.Post("/snippet/create", createSnippetHanlder)

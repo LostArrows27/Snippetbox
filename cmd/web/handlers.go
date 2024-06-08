@@ -33,3 +33,11 @@ func viewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
+
+func staticFileHanlder(w http.ResponseWriter, r *http.Request) {
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+
+	handlerFile := http.StripPrefix("/static", fileServer)
+
+	handlerFile.ServeHTTP(w, r)
+}
