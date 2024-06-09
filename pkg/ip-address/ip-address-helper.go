@@ -1,9 +1,10 @@
 package ipaddress
 
 import (
-	"log"
 	"net"
 	"net/http"
+
+	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
 
 func GetServerIP() ([]string, error) {
@@ -48,5 +49,5 @@ func GetIP(r *http.Request) string {
 
 func LogRequestIP(path string, r *http.Request) {
 	ip := GetIP(r)
-	log.Printf("Request to %s : from %s", path, ip)
+	logger.Info("Request to %s : from %s", path, ip)
 }

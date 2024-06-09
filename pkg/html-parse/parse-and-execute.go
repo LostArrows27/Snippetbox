@@ -1,16 +1,17 @@
 package htmlParse
 
 import (
-	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
 
 func parseHTML(w http.ResponseWriter, path []string) *template.Template {
 	ts, err := template.ParseFiles(path...)
 
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error(err)
 		http.Error(w, "Interal Server Error", 500)
 		return nil
 	}
@@ -24,7 +25,7 @@ func ExecuteHTML(w http.ResponseWriter, base string, path []string) {
 
 	err := ts.ExecuteTemplate(w, base, nil)
 	if err != nil {
-		log.Println(err.Error())
+		logger.Error(err)
 		http.Error(w, "Internal Server Error", 500)
 	}
 }

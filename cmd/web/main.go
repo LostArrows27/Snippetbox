@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/LostArrows27/snippetbox/handler"
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
+	"github.com/LostArrows27/snippetbox/pkg/logger"
 	"github.com/LostArrows27/snippetbox/pkg/rest"
 )
 
@@ -18,10 +18,10 @@ func main() {
 	// 1. Server IPv4 address
 	ips, err := ipaddress.GetServerIP()
 	if err != nil {
-		log.Println("Error:", err)
+		logger.Error(err)
 		return
 	}
-	log.Println("Server IPs:", ips[0])
+	logger.Info("Server IPs: %v", ips[0])
 
 	// 2. configre route
 	restMux := rest.RestAPI{
@@ -33,10 +33,10 @@ func main() {
 	restMux.Post("/snippet/create", handler.CreateSnippetHanlder)
 
 	// 3. run server
-	log.Printf("Starting server on %v", port)
+	logger.Info("Starting server on %v", port)
 	err = http.ListenAndServe(":"+port, restMux.MUX)
 
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err)
 	}
 }

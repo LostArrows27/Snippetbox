@@ -9,3 +9,9 @@ var HomeHTMLLists = []string{
 var HomeBase = "base"
 
 var StaticFileDir = "./ui/static/"
+
+const (
+	GreenBackground = "\033[42m"
+	RedBackground   = "\033[41m"
+	Reset           = "\033[0m"
+)

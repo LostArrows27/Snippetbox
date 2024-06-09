@@ -22,9 +22,9 @@ func CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
-	ipaddress.LogRequestIP("/snippet/view", r)
-
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	idStr := r.URL.Query().Get("id")
+	id, err := strconv.Atoi(idStr)
+	ipaddress.LogRequestIP("/snippet/view?id="+idStr, r)
 
 	if err != nil || id < 0 {
 		http.NotFound(w, r)
