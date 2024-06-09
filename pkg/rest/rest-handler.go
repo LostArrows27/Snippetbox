@@ -6,7 +6,7 @@ import "net/http"
 // example: / -> won't match with /**
 // example: /view/ -> won't match with /view/**
 
-func HandlerMethod(method string, handler HandlerFunc, path string, config ...string) HandlerFunc {
+func handlerMethod(method string, handler HandlerFunc, path string, config ...string) HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != method {
 			w.Header().Set("Allow", method)

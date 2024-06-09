@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"fmt"
@@ -10,18 +10,18 @@ import (
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/", r)
 
 	htmlParse.ExecuteHTML(w, cnst.HomeBase, cnst.HomeHTMLLists)
 }
 
-func createSnippetHanlder(w http.ResponseWriter, r *http.Request) {
+func CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/snippet/create", r)
 	w.Write([]byte("Create snippet"))
 }
 
-func viewSnippetHandler(w http.ResponseWriter, r *http.Request) {
+func ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/snippet/view", r)
 
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
@@ -34,8 +34,8 @@ func viewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func staticFileHanlder(w http.ResponseWriter, r *http.Request) {
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
+func StaticFileHanlder(w http.ResponseWriter, r *http.Request) {
+	fileServer := http.FileServer(http.Dir(cnst.StaticFileDir))
 
 	handlerFile := http.StripPrefix("/static", fileServer)
 

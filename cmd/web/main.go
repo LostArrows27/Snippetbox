@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/LostArrows27/snippetbox/handler"
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/rest"
@@ -26,10 +27,10 @@ func main() {
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
-	restMux.Get("/static/", staticFileHanlder)
-	restMux.Get("/", home, "fixed")
-	restMux.Get("/snippet/view", viewSnippetHandler)
-	restMux.Post("/snippet/create", createSnippetHanlder)
+	restMux.Get("/static/", handler.StaticFileHanlder)
+	restMux.Get("/", handler.HomeHandler, "fixed")
+	restMux.Get("/snippet/view", handler.ViewSnippetHandler)
+	restMux.Post("/snippet/create", handler.CreateSnippetHanlder)
 
 	// 3. run server
 	log.Printf("Starting server on %v", port)

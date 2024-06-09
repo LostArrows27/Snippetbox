@@ -7,3 +7,5 @@ var HomeHTMLLists = []string{
 }
 
 var HomeBase = "base"
+
+var StaticFileDir = "./ui/static/"
