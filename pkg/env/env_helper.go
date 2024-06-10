@@ -1,26 +1,28 @@
 package env
 
 import (
-	"errors"
+	"log"
 	"os"
 
-	"github.com/LostArrows27/snippetbox/pkg/logger"
 	"github.com/joho/godotenv"
 )
 
 func GetEnv(name string) string {
-	portString := os.Getenv(name)
+	value := os.Getenv(name)
 
-	if portString == "" {
-		logger.Error(errors.New("not found port"))
+	if value == "" {
+		// logger.Error(errors.New("not found port"))
+		log.Fatal("not found " + name)
 	}
 
-	return portString
+	return value
 }
 
 func LoadEnv(path string) {
 	err := godotenv.Load(path)
 	if err != nil {
-		logger.Error(errors.New("error in loading .env"))
+		// logger.Error(errors.New("error in loading .env"))
+		log.Fatal("error in loading .env")
+
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/LostArrows27/snippetbox/handler"
 	"github.com/LostArrows27/snippetbox/pkg/env"
@@ -21,6 +22,7 @@ func main() {
 		logger.Error(err)
 		return
 	}
+
 	logger.Info("Server IPs: %v", ips[0])
 
 	// 2. configre route
@@ -32,11 +34,16 @@ func main() {
 	restMux.Get("/snippet/view", handler.ViewSnippetHandler)
 	restMux.Post("/snippet/create", handler.CreateSnippetHanlder)
 
-	// 3. run server
-	logger.Info("Starting server on %v", port)
-	err = http.ListenAndServe(":"+port, restMux.MUX)
+	// 3. configure server + run server
+	srv := &http.Server{
+		Addr:     ":" + port,
+		ErrorLog: logger.NewErrorLogger().Logger,
+		Handler:  restMux.MUX,
+	}
+	err = srv.ListenAndServe()
 
 	if err != nil {
 		logger.Error(err)
+		os.Exit(1)
 	}
 }
