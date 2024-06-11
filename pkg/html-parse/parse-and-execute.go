@@ -3,29 +3,25 @@ package htmlParse
 import (
 	"net/http"
 	"text/template"
-
-	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
 
-func parseHTML(w http.ResponseWriter, path []string) *template.Template {
+func ParseHTML(w http.ResponseWriter, path []string) (*template.Template, error) {
 	ts, err := template.ParseFiles(path...)
 
 	if err != nil {
-		logger.Error(err)
-		http.Error(w, "Interal Server Error", 500)
-		return nil
+		return nil, err
 	}
 
-	return ts
+	return ts, nil
 
 }
 
-func ExecuteHTML(w http.ResponseWriter, base string, path []string) {
-	ts := parseHTML(w, path)
+func ExecuteHTML(w http.ResponseWriter, ts *template.Template, base string, path []string) error {
 
 	err := ts.ExecuteTemplate(w, base, nil)
 	if err != nil {
-		logger.Error(err)
-		http.Error(w, "Internal Server Error", 500)
+		return err
 	}
+
+	return nil
 }

@@ -22,22 +22,27 @@ func main() {
 		logger.Error(err)
 		return
 	}
-
 	logger.Info("Server IPs: %v", ips[0])
+
+	// 2. configure application global variables + dependency
+	app := &handler.Application{
+		ErrorLog: *logger.ErrorLogger(),
+		InfoLog:  *logger.InfoLogger(),
+	}
 
 	// 2. configre route
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
-	restMux.Get("/static/", handler.StaticFileHanlder)
-	restMux.Get("/", handler.HomeHandler, "fixed")
-	restMux.Get("/snippet/view", handler.ViewSnippetHandler)
-	restMux.Post("/snippet/create", handler.CreateSnippetHanlder)
+	restMux.Get("/static/", app.HomeHandler)
+	restMux.Get("/", app.HomeHandler, "fixed")
+	restMux.Get("/snippet/view", app.ViewSnippetHandler)
+	restMux.Post("/snippet/create", app.CreateSnippetHanlder)
 
 	// 3. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
-		ErrorLog: logger.NewErrorLogger().Logger,
+		ErrorLog: logger.ErrorLogger().Logger,
 		Handler:  restMux.MUX,
 	}
 	err = srv.ListenAndServe()

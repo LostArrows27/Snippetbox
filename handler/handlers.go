@@ -2,39 +2,59 @@ package handler
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 
 	cnst "github.com/LostArrows27/snippetbox/pkg/const"
-	htmlParse "github.com/LostArrows27/snippetbox/pkg/html-parse"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
+	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	ipaddress.LogRequestIP("/", r)
-
-	htmlParse.ExecuteHTML(w, cnst.HomeBase, cnst.HomeHTMLLists)
+type Application struct {
+	ErrorLog logger.CustomLogger
+	InfoLog  logger.CustomLogger
 }
 
-func CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
+func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
+	ipaddress.LogRequestIP("/", r)
+
+	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+
+	if err != nil {
+		http.Error(w, "Interal Server Error", 500)
+		app.ErrorLog.Print(err)
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, cnst.HomeBase, cnst.HomeHTMLLists)
+
+	if err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		app.ErrorLog.Print(err)
+	}
+}
+
+func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/snippet/create", r)
 	w.Write([]byte("Create snippet"))
 }
 
-func ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(idStr)
 	ipaddress.LogRequestIP("/snippet/view?id="+idStr, r)
 
 	if err != nil || id < 0 {
 		http.NotFound(w, r)
+		app.ErrorLog.Print(err)
 		return
 	}
 
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func StaticFileHanlder(w http.ResponseWriter, r *http.Request) {
+func (app *Application) StaticFileHanlder(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir(cnst.StaticFileDir))
 
 	handlerFile := http.StripPrefix("/static", fileServer)
