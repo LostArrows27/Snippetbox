@@ -23,6 +23,7 @@ func main() {
 		return
 	}
 	logger.Info("Server IPs: %v", ips[0])
+	logger.Info("Starting server on port: %v", port)
 
 	// 2. configure application global variables + dependency
 	app := &handler.Application{

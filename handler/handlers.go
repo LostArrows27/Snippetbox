@@ -22,16 +22,14 @@ func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
 
 	if err != nil {
-		http.Error(w, "Interal Server Error", 500)
-		app.ErrorLog.Print(err)
+		app.serverError(w, err)
 		return
 	}
 
 	err = ts.ExecuteTemplate(w, cnst.HomeBase, cnst.HomeHTMLLists)
 
 	if err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		app.ErrorLog.Print(err)
+		app.serverError(w, err)
 	}
 }
 
@@ -46,8 +44,7 @@ func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Reques
 	ipaddress.LogRequestIP("/snippet/view?id="+idStr, r)
 
 	if err != nil || id < 0 {
-		http.NotFound(w, r)
-		app.ErrorLog.Print(err)
+		app.notFound(w)
 		return
 	}
 
