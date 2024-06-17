@@ -16,7 +16,7 @@ func main() {
 	env.LoadEnv(".env")
 	port := env.GetEnv("PORT")
 
-	// 1. Server IPv4 address
+	// 1. erver IPv4 address
 	ips, err := ipaddress.GetServerIP()
 	if err != nil {
 		logger.Error(err)
@@ -31,20 +31,16 @@ func main() {
 		InfoLog:  *logger.InfoLogger(),
 	}
 
-	// 2. configre route
+	// 3 configure rest API to pass in app router
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
-	restMux.Get("/static/", app.StaticFileHanlder)
-	restMux.Get("/", app.HomeHandler, "fixed")
-	restMux.Get("/snippet/view", app.ViewSnippetHandler)
-	restMux.Post("/snippet/create", app.CreateSnippetHanlder)
 
-	// 3. configure server + run server
+	// 4. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
 		ErrorLog: logger.ErrorLogger().Logger,
-		Handler:  restMux.MUX,
+		Handler:  app.RoutesHandler(restMux),
 	}
 	err = srv.ListenAndServe()
 
