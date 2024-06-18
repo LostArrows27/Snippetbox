@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/LostArrows27/snippetbox/handler"
+	"github.com/LostArrows27/snippetbox/pkg/database"
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
@@ -12,11 +13,21 @@ import (
 )
 
 func main() {
-	// 0. load ENV
+	// 0. load ENV + init dependency
 	env.LoadEnv(".env")
 	port := env.GetEnv("PORT")
+	dbURL := env.GetEnv("DB_URL")
+	errorLog := logger.ErrorLogger()
+	infoLog := logger.InfoLogger()
 
-	// 1. erver IPv4 address
+	// 1. connect to database
+	db, err := database.OpenDB(dbURL)
+	if err != nil {
+		errorLog.Fatal(err)
+	}
+	defer db.Close()
+
+	// 2. log server IPv4 address + port
 	ips, err := ipaddress.GetServerIP()
 	if err != nil {
 		logger.Error(err)
@@ -25,21 +36,21 @@ func main() {
 	logger.Info("Server IPs: %v", ips[0])
 	logger.Info("Starting server on port: %v", port)
 
-	// 2. configure application global variables + dependency
+	// 3. configure application global variables + dependency
 	app := &handler.Application{
-		ErrorLog: *logger.ErrorLogger(),
-		InfoLog:  *logger.InfoLogger(),
+		ErrorLog: *errorLog,
+		InfoLog:  *infoLog,
 	}
 
-	// 3 configure rest API to pass in app router
+	// 4. configure rest API to pass in app router
 	restMux := rest.RestAPI{
 		MUX: http.NewServeMux(),
 	}
 
-	// 4. configure server + run server
+	// 5. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
-		ErrorLog: logger.ErrorLogger().Logger,
+		ErrorLog: errorLog.Logger,
 		Handler:  app.RoutesHandler(restMux),
 	}
 	err = srv.ListenAndServe()
