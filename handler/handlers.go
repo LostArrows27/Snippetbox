@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	cnst "github.com/LostArrows27/snippetbox/internal/const"
+	"github.com/LostArrows27/snippetbox/internal/models"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
@@ -14,6 +15,7 @@ import (
 type Application struct {
 	ErrorLog logger.CustomLogger
 	InfoLog  logger.CustomLogger
+	Snippets *models.SnippetModel
 }
 
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {

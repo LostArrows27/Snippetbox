@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/LostArrows27/snippetbox/handler"
+	"github.com/LostArrows27/snippetbox/internal/models"
 	"github.com/LostArrows27/snippetbox/pkg/database"
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
@@ -40,6 +41,7 @@ func main() {
 	app := &handler.Application{
 		ErrorLog: *errorLog,
 		InfoLog:  *infoLog,
+		Snippets: &models.SnippetModel{DB: db},
 	}
 
 	// 4. configure rest API to pass in app router
