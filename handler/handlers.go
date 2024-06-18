@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	cnst "github.com/LostArrows27/snippetbox/pkg/const"
+	cnst "github.com/LostArrows27/snippetbox/internal/const"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
 )

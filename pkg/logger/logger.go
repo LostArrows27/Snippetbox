@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	cnst "github.com/LostArrows27/snippetbox/pkg/const"
+	cnst "github.com/LostArrows27/snippetbox/internal/const"
 	"github.com/LostArrows27/snippetbox/pkg/env"
 )
 
