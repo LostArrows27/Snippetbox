@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"text/template"
 
 	cnst "github.com/LostArrows27/snippetbox/internal/const"
 	"github.com/LostArrows27/snippetbox/internal/models"
@@ -21,29 +22,29 @@ type Application struct {
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/", r)
 
-	snippets, err := app.Snippets.Latest()
-
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet.Content)
-	}
-
-	// ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+	// snippets, err := app.Snippets.Latest()
 
 	// if err != nil {
 	// 	app.serverError(w, err)
 	// 	return
 	// }
 
-	// err = ts.ExecuteTemplate(w, cnst.HomeBase, cnst.HomeHTMLLists)
-
-	// if err != nil {
-	// 	app.serverError(w, err)
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(w, "%+v\n", snippet.Content)
 	// }
+
+	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, cnst.HomeBase, nil)
+
+	if err != nil {
+		app.serverError(w, err)
+	}
 }
 
 func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +85,19 @@ func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	fmt.Fprintf(w, "%+v", snippet)
+	ts, err := template.ParseFiles(cnst.ViewSnippetHTMLLists...)
+
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = ts.ExecuteTemplate(w, cnst.HomeBase, snippet)
+
+	if err != nil {
+		app.serverError(w, err)
+	}
+
 }
 
 func (app *Application) StaticFileHanlder(w http.ResponseWriter, r *http.Request) {
