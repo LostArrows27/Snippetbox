@@ -92,7 +92,11 @@ func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, cnst.HomeBase, snippet)
+	data := &templateData{
+		Snippet: snippet,
+	}
+
+	err = ts.ExecuteTemplate(w, cnst.HomeBase, data)
 
 	if err != nil {
 		app.serverError(w, err)
