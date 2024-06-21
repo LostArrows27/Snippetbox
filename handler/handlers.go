@@ -3,7 +3,6 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"strconv"
 
@@ -22,18 +21,29 @@ type Application struct {
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/", r)
 
-	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+	snippets, err := app.Snippets.Latest()
 
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, cnst.HomeBase, cnst.HomeHTMLLists)
-
-	if err != nil {
-		app.serverError(w, err)
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%+v\n", snippet.Content)
 	}
+
+	// ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+
+	// if err != nil {
+	// 	app.serverError(w, err)
+	// 	return
+	// }
+
+	// err = ts.ExecuteTemplate(w, cnst.HomeBase, cnst.HomeHTMLLists)
+
+	// if err != nil {
+	// 	app.serverError(w, err)
+	// }
 }
 
 func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
