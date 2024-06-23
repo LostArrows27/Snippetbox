@@ -14,9 +14,10 @@ import (
 )
 
 type Application struct {
-	ErrorLog logger.CustomLogger
-	InfoLog  logger.CustomLogger
-	Snippets *models.SnippetModel
+	ErrorLog      logger.CustomLogger
+	InfoLog       logger.CustomLogger
+	Snippets      *models.SnippetModel
+	TemplateCache map[string]*template.Template
 }
 
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -28,20 +29,10 @@ func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	data := &templateData{
+	app.render(w, http.StatusOK, "home.html", &templateData{
 		Snippets: snippets,
-	}
+	})
 
-	err = ts.ExecuteTemplate(w, cnst.HomeBase, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
 }
 
 func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
@@ -82,22 +73,9 @@ func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	ts, err := template.ParseFiles(cnst.ViewSnippetHTMLLists...)
-
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	data := &templateData{
+	app.render(w, http.StatusOK, "view.html", &templateData{
 		Snippet: snippet,
-	}
-
-	err = ts.ExecuteTemplate(w, cnst.HomeBase, data)
-
-	if err != nil {
-		app.serverError(w, err)
-	}
+	})
 
 }
 

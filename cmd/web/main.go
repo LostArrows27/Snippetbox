@@ -20,6 +20,11 @@ func main() {
 	dbURL := env.GetEnv("DB_URL")
 	errorLog := logger.ErrorLogger()
 	infoLog := logger.InfoLogger()
+	template, err := handler.NewTemplateCache() // load all html page into template in runtime
+
+	if err != nil {
+		logger.Error(err)
+	}
 
 	// 1. connect to database
 	db, err := database.OpenDB(dbURL)
@@ -39,9 +44,10 @@ func main() {
 
 	// 3. configure application global variables + dependency
 	app := &handler.Application{
-		ErrorLog: *errorLog,
-		InfoLog:  *infoLog,
-		Snippets: &models.SnippetModel{DB: db},
+		ErrorLog:      *errorLog,
+		InfoLog:       *infoLog,
+		Snippets:      &models.SnippetModel{DB: db},
+		TemplateCache: template,
 	}
 
 	// 4. configure rest API to pass in app router
