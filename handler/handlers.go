@@ -22,26 +22,23 @@ type Application struct {
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	ipaddress.LogRequestIP("/", r)
 
-	// snippets, err := app.Snippets.Latest()
-
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// 	return
-	// }
-
-	// for _, snippet := range snippets {
-	// 	fmt.Fprintf(w, "%+v\n", snippet.Content)
-	// }
-
-	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
-
+	snippets, err := app.Snippets.Latest()
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, cnst.HomeBase, nil)
+	ts, err := template.ParseFiles(cnst.HomeHTMLLists...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 
+	data := &templateData{
+		Snippets: snippets,
+	}
+
+	err = ts.ExecuteTemplate(w, cnst.HomeBase, data)
 	if err != nil {
 		app.serverError(w, err)
 	}
