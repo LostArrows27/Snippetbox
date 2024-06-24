@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -67,10 +68,14 @@ func (app *Application) render(w http.ResponseWriter, status int, page string, d
 		return
 	}
 
-	w.WriteHeader(status)
+	buf := new(bytes.Buffer)
 
-	err := ts.ExecuteTemplate(w, "base", data)
+	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
+
+	w.WriteHeader(status)
+	buf.WriteTo(w)
 }
