@@ -21,7 +21,15 @@ family=Ubuntu+Mono:400,700'>
     <main>
         {{template "main" .}}
     </main>
-    <footer>Powered by <a target="_blank" href='https://golang.org/'>Go</a></footer>
+    <footer style="height: 90px;">
+        <div>
+            Powered by <a target="_blank" href='https://golang.org/'>Go</a>
+        </div>
+        <div>
+            Written by <a target="_blank" href='https://github.com/LostArrows27'>Thanh Dung</a>
+            in {{.CurrentYear}}
+        </div>
+    </footer>
     <!-- And include the JavaScript file -->
     <script src="/static/js/main.js" type="text/javascript"></script>
 </body>

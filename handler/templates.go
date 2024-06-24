@@ -6,14 +6,17 @@ import (
 	"net/http"
 	"path/filepath"
 	"text/template"
+	"time"
 
 	cnst "github.com/LostArrows27/snippetbox/internal/const"
-	"github.com/LostArrows27/snippetbox/internal/models"
 )
 
-type templateData struct {
-	Snippet  *models.Snippet
-	Snippets []*models.Snippet
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
+}
+
+var functions = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 /*
@@ -37,7 +40,7 @@ func NewTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.ParseFiles(cnst.HomeBasePath)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(cnst.HomeBasePath)
 		if err != nil {
 			return nil, err
 		}
