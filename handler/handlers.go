@@ -9,7 +9,6 @@ import (
 
 	cnst "github.com/LostArrows27/snippetbox/internal/const"
 	"github.com/LostArrows27/snippetbox/internal/models"
-	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
 )
 
@@ -21,7 +20,6 @@ type Application struct {
 }
 
 func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
-	ipaddress.LogRequestIP("/", r)
 
 	snippets, err := app.Snippets.Latest()
 	if err != nil {
@@ -37,7 +35,6 @@ func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
-	ipaddress.LogRequestIP("/snippet/create", r)
 
 	title := "O snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n–Kobayashi Issa"
@@ -56,7 +53,6 @@ func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Requ
 func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(idStr)
-	ipaddress.LogRequestIP("/snippet/view?id="+idStr, r)
 
 	if err != nil || id < 0 {
 		app.notFound(w)

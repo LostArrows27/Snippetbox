@@ -2,6 +2,8 @@ package handler
 
 import "net/http"
 
+// logRequest → secureHeaders → serveMux → handler
+
 func secureHeaders(nextHandler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// need to do this in your own code.
@@ -13,5 +15,13 @@ func secureHeaders(nextHandler http.Handler) http.Handler {
 		w.Header().Set("X-XSS-Protection", "0")
 
 		nextHandler.ServeHTTP(w, r)
+	})
+}
+
+func (app *Application) logRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		app.InfoLog.Printf("%s - %s %s %s", r.RemoteAddr, r.Proto, r.Method,
+			r.URL.RequestURI())
+		next.ServeHTTP(w, r)
 	})
 }

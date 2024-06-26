@@ -12,5 +12,5 @@ func (app *Application) RoutesHandler(restMux rest.RestAPI) http.Handler {
 	restMux.Get("/", app.HomeHandler, "fixed")
 	restMux.Get("/snippet/view", app.ViewSnippetHandler)
 	restMux.Post("/snippet/create", app.CreateSnippetHanlder)
-	return secureHeaders(restMux.MUX)
+	return app.logRequest(secureHeaders(restMux.MUX))
 }
