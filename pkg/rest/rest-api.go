@@ -9,13 +9,13 @@ type RestAPI struct {
 }
 
 func (rest *RestAPI) Get(path string, handler HandlerFunc, config ...string) {
-	handlerGet := handlerMethod("GET", handler, path, config...)
+	handlerGet := handlerMethod(http.MethodGet, handler, path, config...)
 
 	rest.MUX.HandleFunc(path, handlerGet)
 }
 
 func (rest *RestAPI) Post(path string, handler HandlerFunc, config ...string) {
-	postHandler := handlerMethod("POST", handler, path, config...)
+	postHandler := handlerMethod(http.MethodPost, handler, path, config...)
 
 	rest.MUX.HandleFunc(path, postHandler)
 }
