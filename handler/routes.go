@@ -15,7 +15,9 @@ func (app *Application) RoutesHandler() http.Handler {
 
 	// 2. not found router
 	router.NotFound = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		app.notFound(w)
+		app.render(w, http.StatusOK, "not-found.html", &templateData{
+			Title: "404 - Not Found",
+		})
 	})
 
 	// 3. main router + handler
