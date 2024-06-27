@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/LostArrows27/snippetbox/pkg/rest"
+	"github.com/justinas/alice"
 )
 
 // secureheaders -> middleware -> servermux -> handler
@@ -13,5 +14,7 @@ func (app *Application) RoutesHandler(restMux rest.RestAPI) http.Handler {
 	restMux.Get("/snippet/view", app.ViewSnippetHandler)
 	restMux.Post("/snippet/create", app.CreateSnippetHanlder)
 
-	return app.recoverPanic(app.logRequest(secureHeaders(restMux.MUX)))
+	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
+
+	return standard.Then(restMux.MUX)
 }
