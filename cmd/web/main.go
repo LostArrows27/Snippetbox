@@ -10,7 +10,6 @@ import (
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
-	"github.com/LostArrows27/snippetbox/pkg/rest"
 )
 
 func main() {
@@ -50,16 +49,11 @@ func main() {
 		TemplateCache: template,
 	}
 
-	// 4. configure rest API to pass in app router
-	restMux := rest.RestAPI{
-		MUX: http.NewServeMux(),
-	}
-
 	// 5. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
 		ErrorLog: errorLog.Logger,
-		Handler:  app.RoutesHandler(restMux),
+		Handler:  app.RoutesHandler(),
 	}
 	err = srv.ListenAndServe()
 

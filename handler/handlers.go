@@ -10,6 +10,7 @@ import (
 	cnst "github.com/LostArrows27/snippetbox/internal/const"
 	"github.com/LostArrows27/snippetbox/internal/models"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Application struct {
@@ -19,7 +20,7 @@ type Application struct {
 	TemplateCache map[string]*template.Template
 }
 
-func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
+func (app *Application) snippetHomeView(w http.ResponseWriter, r *http.Request) {
 
 	snippets, err := app.Snippets.Latest()
 	if err != nil {
@@ -34,7 +35,11 @@ func (app *Application) HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Request) {
+func (app *Application) snippetCreateForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display the form for creating a new snippet..."))
+}
+
+func (app *Application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 
 	title := "O snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n–Kobayashi Issa"
@@ -50,11 +55,13 @@ func (app *Application) CreateSnippetHanlder(w http.ResponseWriter, r *http.Requ
 
 }
 
-func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := r.URL.Query().Get("id")
-	id, err := strconv.Atoi(idStr)
+func (app *Application) snippetView(w http.ResponseWriter, r *http.Request) {
 
-	if err != nil || id < 0 {
+	params := httprouter.ParamsFromContext(r.Context())
+
+	id, err := strconv.Atoi(params.ByName("id"))
+
+	if err != nil || id < 1 {
 		app.notFound(w)
 		return
 	}
@@ -77,7 +84,7 @@ func (app *Application) ViewSnippetHandler(w http.ResponseWriter, r *http.Reques
 
 }
 
-func (app *Application) StaticFileHanlder(w http.ResponseWriter, r *http.Request) {
+func (app *Application) fileHandler(w http.ResponseWriter, r *http.Request) {
 	fileServer := http.FileServer(http.Dir(cnst.StaticFileDir))
 
 	handlerFile := http.StripPrefix("/static", fileServer)
