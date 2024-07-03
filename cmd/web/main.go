@@ -49,7 +49,7 @@ func main() {
 		TemplateCache: template,
 	}
 
-	// 5. configure server + run server
+	// 4. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
 		ErrorLog: errorLog.Logger,
