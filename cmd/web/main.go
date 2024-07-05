@@ -10,6 +10,7 @@ import (
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
+	"github.com/go-playground/form/v4"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 	dbURL := env.GetEnv("DB_URL")
 	errorLog := logger.ErrorLogger()
 	infoLog := logger.InfoLogger()
+	form := form.NewDecoder()
 	template, err := handler.NewTemplateCache() // load all html page into template in runtime
 
 	if err != nil {
@@ -47,6 +49,7 @@ func main() {
 		InfoLog:       *infoLog,
 		Snippets:      &models.SnippetModel{DB: db},
 		TemplateCache: template,
+		FormDecoder:   form,
 	}
 
 	// 4. configure server + run server
