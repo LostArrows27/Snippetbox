@@ -11,16 +11,18 @@ import (
 	"github.com/LostArrows27/snippetbox/internal/models"
 	"github.com/LostArrows27/snippetbox/internal/validator"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 	"github.com/julienschmidt/httprouter"
 )
 
 type Application struct {
-	ErrorLog      logger.CustomLogger
-	InfoLog       logger.CustomLogger
-	Snippets      *models.SnippetModel
-	TemplateCache map[string]*template.Template
-	FormDecoder   *form.Decoder
+	ErrorLog       logger.CustomLogger
+	InfoLog        logger.CustomLogger
+	Snippets       *models.SnippetModel
+	TemplateCache  map[string]*template.Template
+	FormDecoder    *form.Decoder
+	SessionManager *scs.SessionManager
 }
 
 type snippetCreateForm struct {

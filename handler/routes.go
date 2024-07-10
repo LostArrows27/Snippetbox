@@ -20,14 +20,18 @@ func (app *Application) RoutesHandler() http.Handler {
 		})
 	})
 
-	// 3. main router + handler
-	router.HandlerFunc(http.MethodGet, "/", app.snippetHomeView)
-	router.HandlerFunc(http.MethodGet, "/static/*filepath", app.fileHandler)
-	router.HandlerFunc(http.MethodGet, "/snippet/view/:id", app.snippetView)
-	router.HandlerFunc(http.MethodGet, "/snippet/create", app.snippetCreateForm)
-	router.HandlerFunc(http.MethodPost, "/snippet/create", app.snippetCreatePost)
+	// 3. config session manager middleware
 
-	// 4. chain middleware
+	sessionStore := app.SessionManager
+
+	// 4. main router + handler
+	router.HandlerFunc(http.MethodGet, "/static/*filepath", app.fileHandler)
+	router.Handler(http.MethodGet, "/", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetHomeView)))
+	router.Handler(http.MethodGet, "/snippet/view/:id", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetView)))
+	router.Handler(http.MethodGet, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreateForm)))
+	router.Handler(http.MethodPost, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreatePost)))
+
+	// 5. chain middleware
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
 	return standard.Then(router)

@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/LostArrows27/snippetbox/handler"
 	"github.com/LostArrows27/snippetbox/internal/models"
@@ -10,6 +11,8 @@ import (
 	"github.com/LostArrows27/snippetbox/pkg/env"
 	ipaddress "github.com/LostArrows27/snippetbox/pkg/ip-address"
 	"github.com/LostArrows27/snippetbox/pkg/logger"
+	"github.com/alexedwards/scs/postgresstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 )
 
@@ -34,7 +37,12 @@ func main() {
 	}
 	defer db.Close()
 
-	// 2. log server IPv4 address + port
+	// 2. configure session manager as dependency to application
+	sessionManager := scs.New()
+	sessionManager.Store = postgresstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
+	// 3. log server IPv4 address + port
 	ips, err := ipaddress.GetServerIP()
 	if err != nil {
 		logger.Error(err)
@@ -43,16 +51,17 @@ func main() {
 	logger.Info("Server IPs: %v", ips[0])
 	logger.Info("Starting server on port: %v", port)
 
-	// 3. configure application global variables + dependency
+	// 4. configure application global variables + dependency
 	app := &handler.Application{
-		ErrorLog:      *errorLog,
-		InfoLog:       *infoLog,
-		Snippets:      &models.SnippetModel{DB: db},
-		TemplateCache: template,
-		FormDecoder:   form,
+		ErrorLog:       *errorLog,
+		InfoLog:        *infoLog,
+		Snippets:       &models.SnippetModel{DB: db},
+		TemplateCache:  template,
+		FormDecoder:    form,
+		SessionManager: sessionManager,
 	}
 
-	// 4. configure server + run server
+	// 5. configure server + run server
 	srv := &http.Server{
 		Addr:     ":" + port,
 		ErrorLog: errorLog.Logger,
