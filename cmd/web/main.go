@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"net/http"
 	"os"
 	"time"
@@ -63,10 +64,15 @@ func main() {
 	}
 
 	// 5. configure server + run HTTPS server
+	tlsConfig := &tls.Config{
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+	}
+
 	srv := &http.Server{
-		Addr:     ":" + port,
-		ErrorLog: errorLog.Logger,
-		Handler:  app.RoutesHandler(),
+		Addr:      ":" + port,
+		ErrorLog:  errorLog.Logger,
+		Handler:   app.RoutesHandler(),
+		TLSConfig: tlsConfig,
 	}
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 
