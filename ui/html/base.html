@@ -27,6 +27,10 @@ family=Ubuntu+Mono:400,700'>
     </header>
     {{template "nav" .}}
     <main>
+        <!-- Display the flash message if one exists -->
+        {{with .Flash}}
+        <div class='flash'>{{.}}</div>
+        {{end}}
         {{template "main" .}}
     </main>
     <footer style="height: 90px;">

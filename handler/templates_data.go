@@ -13,10 +13,14 @@ type templateData struct {
 	Snippets    []*models.Snippet
 	Title       string
 	Form        any
+	Flash       string
 }
 
 func (app *Application) newTemplateData(r *http.Request) *templateData {
+	// remove the flash from the request -> not show next time
+
 	return &templateData{
 		CurrentYear: time.Now().Year(),
+		Flash:       app.SessionManager.PopString(r.Context(), "flash"),
 	}
 }
