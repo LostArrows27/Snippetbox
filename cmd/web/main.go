@@ -69,10 +69,13 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:      ":" + port,
-		ErrorLog:  errorLog.Logger,
-		Handler:   app.RoutesHandler(),
-		TLSConfig: tlsConfig,
+		Addr:         ":" + port,
+		ErrorLog:     errorLog.Logger,
+		Handler:      app.RoutesHandler(),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 
