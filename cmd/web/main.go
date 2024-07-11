@@ -41,6 +41,7 @@ func main() {
 	sessionManager := scs.New()
 	sessionManager.Store = postgresstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
 
 	// 3. log server IPv4 address + port
 	ips, err := ipaddress.GetServerIP()
@@ -61,13 +62,13 @@ func main() {
 		SessionManager: sessionManager,
 	}
 
-	// 5. configure server + run server
+	// 5. configure server + run HTTPS server
 	srv := &http.Server{
 		Addr:     ":" + port,
 		ErrorLog: errorLog.Logger,
 		Handler:  app.RoutesHandler(),
 	}
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 
 	if err != nil {
 		logger.Error(err)
