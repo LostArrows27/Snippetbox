@@ -31,6 +31,12 @@ func (app *Application) RoutesHandler() http.Handler {
 	router.Handler(http.MethodGet, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreateForm)))
 	router.Handler(http.MethodPost, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreatePost)))
 
+	router.Handler(http.MethodGet, "/user/signup", sessionStore.LoadAndSave(http.HandlerFunc(app.userSignup)))
+	router.Handler(http.MethodPost, "/user/signup", sessionStore.LoadAndSave(http.HandlerFunc(app.userSignupPost)))
+	router.Handler(http.MethodGet, "/user/login", sessionStore.LoadAndSave(http.HandlerFunc(app.userLogin)))
+	router.Handler(http.MethodPost, "/user/login", sessionStore.LoadAndSave(http.HandlerFunc(app.userLoginPost)))
+	router.Handler(http.MethodPost, "/user/logout", sessionStore.LoadAndSave(http.HandlerFunc(app.userLogoutPost)))
+
 	// 5. chain middleware
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
