@@ -20,6 +20,7 @@ type Application struct {
 	ErrorLog       logger.CustomLogger
 	InfoLog        logger.CustomLogger
 	Snippets       *models.SnippetModel
+	Users          *models.UserModel
 	TemplateCache  map[string]*template.Template
 	FormDecoder    *form.Decoder
 	SessionManager *scs.SessionManager
