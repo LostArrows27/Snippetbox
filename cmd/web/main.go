@@ -43,6 +43,7 @@ func main() {
 	sessionManager.Store = postgresstore.New(db)
 	sessionManager.Lifetime = 12 * time.Hour
 	sessionManager.Cookie.Secure = true
+	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 
 	// 3. log server IPv4 address + port
 	ips, err := ipaddress.GetServerIP()
