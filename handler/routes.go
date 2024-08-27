@@ -20,22 +20,25 @@ func (app *Application) RoutesHandler() http.Handler {
 		})
 	})
 
-	// 3. config session manager middleware
+	// 3. config unprotected route + session manager middleware
 
-	sessionStore := app.SessionManager
+	dynamic := alice.New(app.SessionManager.LoadAndSave)
 
-	// 4. main router + handler
 	router.HandlerFunc(http.MethodGet, "/static/*filepath", app.fileHandler)
-	router.Handler(http.MethodGet, "/", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetHomeView)))
-	router.Handler(http.MethodGet, "/snippet/view/:id", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetView)))
-	router.Handler(http.MethodGet, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreateForm)))
-	router.Handler(http.MethodPost, "/snippet/create", sessionStore.LoadAndSave(http.HandlerFunc(app.snippetCreatePost)))
+	router.Handler(http.MethodGet, "/", dynamic.Then(http.HandlerFunc(app.snippetHomeView)))
+	router.Handler(http.MethodGet, "/snippet/view/:id", dynamic.Then(http.HandlerFunc(app.snippetView)))
+	router.Handler(http.MethodGet, "/user/signup", dynamic.Then(http.HandlerFunc(app.userSignup)))
+	router.Handler(http.MethodPost, "/user/signup", dynamic.Then(http.HandlerFunc(app.userSignupPost)))
+	router.Handler(http.MethodGet, "/user/login", dynamic.Then(http.HandlerFunc(app.userLogin)))
+	router.Handler(http.MethodPost, "/user/login", dynamic.Then(http.HandlerFunc(app.userLoginPost)))
 
-	router.Handler(http.MethodGet, "/user/signup", sessionStore.LoadAndSave(http.HandlerFunc(app.userSignup)))
-	router.Handler(http.MethodPost, "/user/signup", sessionStore.LoadAndSave(http.HandlerFunc(app.userSignupPost)))
-	router.Handler(http.MethodGet, "/user/login", sessionStore.LoadAndSave(http.HandlerFunc(app.userLogin)))
-	router.Handler(http.MethodPost, "/user/login", sessionStore.LoadAndSave(http.HandlerFunc(app.userLoginPost)))
-	router.Handler(http.MethodPost, "/user/logout", sessionStore.LoadAndSave(http.HandlerFunc(app.userLogoutPost)))
+	// 4. config protected route + session manager middleware
+
+	protected := dynamic.Append(app.requiredAuthentication)
+
+	router.Handler(http.MethodGet, "/snippet/create", protected.Then(http.HandlerFunc(app.snippetCreateForm)))
+	router.Handler(http.MethodPost, "/snippet/create", protected.Then(http.HandlerFunc(app.snippetCreatePost)))
+	router.Handler(http.MethodPost, "/user/logout", protected.Then(http.HandlerFunc(app.userLogoutPost)))
 
 	// 5. chain middleware
 	standard := alice.New(app.recoverPanic, app.logRequest, secureHeaders)

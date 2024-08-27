@@ -2,6 +2,12 @@
 {{define "main"}}
 <h2>Latest Snippets</h2>
 {{if .Snippets}}
+{{if .IsAuthenticated}}
+<h2>
+    Welcome back, {{.UserData.Name}} sama !
+</h2>
+
+{{end}}
 <table>
     <tr>
         <th>Title</th>

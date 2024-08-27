@@ -105,7 +105,7 @@ func (app *Application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 2. check authentication information
-	id, err := app.Users.Authenticate(form.Email, form.Password)
+	user, err := app.Users.Authenticate(form.Email, form.Password)
 
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
@@ -127,7 +127,8 @@ func (app *Application) userLoginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.SessionManager.Put(r.Context(), "authenticatedUserID", id)
+	app.SessionManager.Put(r.Context(), "authenticatedUserID", user.ID)
+	app.SessionManager.Put(r.Context(), "authenticatedUserName", user.Name)
 
 	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
@@ -141,6 +142,7 @@ func (app *Application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	app.SessionManager.Remove(r.Context(), "authenticatedUserID")
+	app.SessionManager.Remove(r.Context(), "authenticatedUserName")
 
 	app.SessionManager.Put(r.Context(), "flash", "You've been logged out successfully!")
 
