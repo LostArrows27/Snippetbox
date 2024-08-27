@@ -22,7 +22,7 @@ func (app *Application) RoutesHandler() http.Handler {
 
 	// 3. config unprotected route + session manager middleware
 
-	dynamic := alice.New(app.SessionManager.LoadAndSave)
+	dynamic := alice.New(app.SessionManager.LoadAndSave, noSurf)
 
 	router.HandlerFunc(http.MethodGet, "/static/*filepath", app.fileHandler)
 	router.Handler(http.MethodGet, "/", dynamic.Then(http.HandlerFunc(app.snippetHomeView)))

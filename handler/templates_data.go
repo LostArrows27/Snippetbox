@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/LostArrows27/snippetbox/internal/models"
+	"github.com/justinas/nosurf"
 )
 
 type templateData struct {
@@ -16,6 +17,7 @@ type templateData struct {
 	Flash           string
 	IsAuthenticated bool
 	UserData        models.UserData
+	CSRFToken       string
 }
 
 func (app *Application) newTemplateData(r *http.Request) *templateData {
@@ -26,5 +28,6 @@ func (app *Application) newTemplateData(r *http.Request) *templateData {
 		Flash:           app.SessionManager.PopString(r.Context(), "flash"),
 		IsAuthenticated: app.IsAuthenticated(r),
 		UserData:        app.GetAuthenticatedUserData(r),
+		CSRFToken:       nosurf.Token(r),
 	}
 }
